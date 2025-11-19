@@ -56,14 +56,51 @@ void addMiddle(int idx, int value){
         tail = newNode;
     }
 }
+int removeFirst(){
+    if(head == NULL){
+        printf("Linked list is empty \n");
+        return -1;
+    }
+    if(head == tail){
+        int value = head -> data;
+        head = tail = NULL;
+        return value;
+    }
+    int value = head -> data;
+    head = head -> next;
+    return value;
+}
 
+int removeLast(){
+    if(head == NULL){
+        printf("Linked list is empty \n");
+        return -1;
+    }
+    if(head == tail){
+        int value = head -> data;
+        head = tail = NULL;
+        return value;
+    }
+    Node *prev = head;
+    while(prev -> next != tail){
+        prev = prev -> next;
+    }
+    int value = tail -> data;
+    prev -> next = NULL;
+    tail = prev;
+    return value;
+}
 void display(){
+    if(head == NULL){
+        printf("Linked List is empty \n");
+        return;
+    }
     Node *temp = head;
     while(temp != NULL){
         printf("%d -> ",temp -> data);
         temp = temp -> next;
     }
-    printf("NULL");
+    printf("NULL\n");
 }
 
 int main(){
@@ -74,5 +111,8 @@ int main(){
     addLast(60);
     addLast(70);
     addMiddle(3,40);  //addMiddle(idx,value);
+    display();
+    removeFirst();
+    removeLast();
     display();
 }
