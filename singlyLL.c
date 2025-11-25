@@ -6,113 +6,141 @@ typedef struct Node{
     struct Node *next;
 }Node;
 
-Node *head = NULL;      //head is a pointer , *head is a Node that head points to
-Node *tail = NULL;
-
-void addFirst(int value){
-    Node *newNode = (Node *)malloc(sizeof(Node));
-    newNode -> data = value;
-    newNode -> next = NULL;
-    if(head == NULL){           //if Linked List is initially empty then head = tail = newNode
-        head = tail = newNode;
-        return;
+void addFirst(Node **head, int value){
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node -> data = value;
+    if(*head == NULL){
+      *head = new_node;
+      return;
     }
-    newNode -> next = head;
-    head = newNode;
+    new_node -> next = *head;
+    *head = new_node;
 }
 
-void addLast(int value){
-    Node *newNode = (Node *)malloc(sizeof(Node));
-    newNode -> data = value;
-    newNode -> next = NULL;
-    if(head == NULL){          //if Linked List is initially empty then head = tail = newNode
-        head = tail = newNode;
-        return;
+void addLast(Node **head, int value){
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node -> data = value;
+    new_node -> next = NULL;
+    if(*head == NULL){
+      *head = new_node;
+      return;
     }
-    tail -> next = newNode;
-    tail = newNode;
+    Node *temp = *head;
+    while(temp->next != NULL){
+        temp = temp->next;
+    }
+    temp -> next = new_node;
 }
 
-void addMiddle(int idx, int value){
-    if(idx == 0){                        //adding at the first Node
-        addFirst(value);
+void addPos(Node **head, int pos, int value){
+    if(pos == 1){
+        addFirst(head, value);
         return;
     }
-    Node *newNode = (Node *)malloc(sizeof(Node));
-    newNode -> data = value;
-    newNode -> next = NULL;
-    Node *temp = head;
-    int i = 0;
-    while(i < idx - 1 && temp != NULL){  //getting the previous Node
+    Node *temp = *head;
+    int i = 1;
+    while(i < pos - 1 && temp -> next != NULL){
         temp = temp -> next;
         i++;
     }
-    if(temp == NULL){
-        printf("Index out of range \n");
-    }
-    newNode -> next = temp -> next;
-    temp -> next = newNode;
-    if(newNode -> next == NULL){     //adding at the last
-        tail = newNode;
-    }
-}
-int removeFirst(){
-    if(head == NULL){
-        printf("Linked list is empty \n");
-        return -1;
-    }
-    if(head == tail){
-        int value = head -> data;
-        head = tail = NULL;
-        return value;
-    }
-    int value = head -> data;
-    head = head -> next;
-    return value;
-}
-
-int removeLast(){
-    if(head == NULL){
-        printf("Linked list is empty \n");
-        return -1;
-    }
-    if(head == tail){
-        int value = head -> data;
-        head = tail = NULL;
-        return value;
-    }
-    Node *prev = head;
-    while(prev -> next != tail){
-        prev = prev -> next;
-    }
-    int value = tail -> data;
-    prev -> next = NULL;
-    tail = prev;
-    return value;
-}
-void display(){
-    if(head == NULL){
-        printf("Linked List is empty \n");
+    if(i < pos -1){
+        printf("Position out of range \n");
         return;
     }
+    if(temp -> next == NULL){
+        addLast(head, value);
+        return;
+    }
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    newNode -> data = value;
+    newNode -> next = temp -> next;
+    temp -> next = newNode;
+}
+
+void deleteFirst(Node **head){
+    if(*head == NULL){
+        printf("The Linked list is empty\n");
+        return;
+    }
+    Node *temp = *head;
+    *head = (*head) -> next;
+    free(temp);
+}
+
+void deleteLast(Node **head){
+    if(*head == NULL){
+        printf("The Linked list is empty\n");
+    }
+    else if((*head) -> next == NULL){
+        free(*head);
+        *head = NULL;
+    }
+    else{
+        Node *temp = *head;
+        Node *prev = NULL;
+        while(temp -> next != NULL){
+            prev = temp;
+            temp = temp -> next;
+        }
+        prev -> next = NULL;
+        free(temp);
+    }
+}
+
+void display(Node *head){
     Node *temp = head;
-    while(temp != NULL){
-        printf("%d -> ",temp -> data);
+    while(temp!= NULL){
+        printf("%d -> ",temp->data);
         temp = temp -> next;
     }
     printf("NULL\n");
 }
 
+void itrSearch(Node **head , int key){
+    if(*head == NULL){
+        printf("Linked list is empty\n");
+        return;
+    }
+    Node *temp = *head;
+    while(temp != NULL){
+        if(temp -> data == key){
+            printf("Key is found\n");
+            return;
+        }
+        temp = temp -> next;
+    }
+    printf("Key not found\n");
+}
+
+int sizeOf(Node *head){
+    if(head == NULL){
+        printf("Linked list is empty\n");
+        return 0;
+    }
+    Node *temp = head;
+    int size = 1;
+    while(temp -> next != NULL){
+        size += 1;
+        temp = temp -> next;
+    }
+    return size;
+}
+
 int main(){
-    addFirst(30);
-    addFirst(20);
-    addFirst(10);
-    addLast(50);
-    addLast(60);
-    addLast(70);
-    addMiddle(3,40);  //addMiddle(idx,value);
-    display();
-    removeFirst();
-    removeLast();
-    display();
+    Node *head = NULL;
+    addFirst(&head,20);
+    addFirst(&head,10);
+    addLast(&head,40);
+    addLast(&head,50);
+    display(head);
+    deleteFirst(&head);
+    display(head);
+    deleteLast(&head);
+    display(head);
+    deleteFirst(&head);
+    display(head);
+    itrSearch(&head, 80);
+    printf("%d\n",sizeOf(head));
+    deleteLast(&head);
+    display(head);
 }
